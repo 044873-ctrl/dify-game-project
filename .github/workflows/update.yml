@@ -1,0 +1,31 @@
+name: Update Game from Dify
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 * * * *"  # 毎時自動実行（必要なら変更）
+
+jobs:
+  update-game:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Get game code from Dify
+        run: |
+          RESPONSE=$(curl -s -X POST "https://api.dify.ai/v1/assistants/${{ secrets.ASSISTANT_ID }}/outputs" \
+          -H "Authorization: Bearer ${{ secrets.DIFY_API_KEY }}" \
+          -H "Content-Type: application/json" \
+          -d '{"inputs":{"task":"phaser-game-generate"} }')
+          
+          echo "$RESPONSE" | jq -r '.outputs[0].text' > game.js
+
+      - name: Commit and push changes
+        run: |
+          git config user.email "github-actions@github.com"
+          git config user.name "github-actions"
+          git add game.js
+          git commit -m "Auto-update game from Dify" || echo "No changes to commit"
+          git push
