@@ -1,31 +1,49 @@
-name: Update Game from Dify
+name: Dify Auto Deploy Game
 
+# 手動トリガー or 定期実行
 on:
   workflow_dispatch:
   schedule:
-    - cron: "0 * * * *"  # 毎時自動実行（必要なら変更）
+    - cron: '0 * * * *'  # 毎時 0 分に実行
 
 jobs:
-  update-game:
+  generate-and-deploy:
     runs-on: ubuntu-latest
-
     steps:
+      # 1. リポジトリをチェックアウト
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: Get game code from Dify
-        run: |
-          RESPONSE=$(curl -s -X POST "https://api.dify.ai/v1/assistants/${{ secrets.ASSISTANT_ID }}/outputs" \
-          -H "Authorization: Bearer ${{ secrets.DIFY_API_KEY }}" \
-          -H "Content-Type: application/json" \
-          -d '{"inputs":{"task":"phaser-game-generate"} }')
-          
-          echo "$RESPONSE" | jq -r '.outputs[0].text' > game.js
+      # 2. jq をインストール（JSON 抽出用）
+      - name: Install jq
+        run: sudo apt-get update && sudo apt-get install -y jq
 
-      - name: Commit and push changes
+      # 3. Dify Agent でゲームコードを生成
+      - name: Generate game code via Dify Agent
         run: |
-          git config user.email "github-actions@github.com"
-          git config user.name "github-actions"
-          git add game.js
-          git commit -m "Auto-update game from Dify" || echo "No changes to commit"
+          echo "Requesting Phaser game code from Dify Agent..."
+
+          # Agent 名を設定
+          AGENT_NAME="GameGenerator"
+
+          # Dify API にリクエスト
+          RESPONSE=$(curl -s -X POST "https://api.dify.ai/v1/agents/$AGENT_NAME/respond" \
+            -H "Authorization: Bearer ${{ secrets.DIFY_API_KEY }}" \
+            -H "Content-Type: application/json" \
+            -d '{"input":"Phaser 3で矢印キー操作可能な簡易ゲームを index.html と game.js に分けて生成してください"}')
+
+          # JSONから出力テキストを抽出
+          OUTPUT=$(echo "$RESPONSE" | jq -r '.output_text')
+
+          # HTMLとJSに分割（簡易例）
+          echo "$OUTPUT" | awk '/<html>/,/<\/html>/' > index.html
+          echo "$OUTPUT" | awk '/<script src="game.js">/,/<\/script>/' | sed 's/<script src="game.js">//; s/<\/script>//' > game.js
+
+      # 4. 生成ファイルを commit & push
+      - name: Commit and push generated code
+        run: |
+          git config --global user.name "github-actions"
+          git config --global user.email "actions@github.com"
+          git add index.html game.js
+          git commit -m "Auto-generated Phaser game from Dify Agent"
           git push
