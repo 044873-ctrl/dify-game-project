@@ -21,12 +21,13 @@ jobs:
 
       - name: Write index.html
         run: |
-          if [ -z "${{ github.event.client_payload.code_base64 }}" ]; then
+          PAYLOAD="${{ github.event.client_payload.code_base64 }}"
+          if [ -z "$PAYLOAD" ]; then
             echo "<html><body><h1>No payload received</h1></body></html>" > index.html
           else
-            echo "${{ github.event.client_payload.code_base64 }}" | base64 --decode > index.html || \
-            echo "<html><body><h1>Base64 decode failed</h1></body></html>" > index.html
+            printf "%s" "$PAYLOAD" | base64 --decode > index.html
           fi
+
 
       - name: Commit and push
         run: |
