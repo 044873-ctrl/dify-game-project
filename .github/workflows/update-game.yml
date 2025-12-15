@@ -11,37 +11,21 @@ permissions:
 jobs:
   update:
     runs-on: ubuntu-latest
+
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
       - name: Debug payload (safe)
         run: |
           echo "Payload exists:"
-          echo "${{ github.event.client_payload.code_base64 }}" | head -c 50 || true
+          echo "${{ github.event.client_payload.code_base64 }}" | head -c 120 || true
+          echo ""
 
       - name: Write index.html
         run: |
           PAYLOAD="${{ github.event.client_payload.code_base64 }}"
 
-          # 空チェック
+          # 1. 空チェック
           if [ -z "$PAYLOAD" ]; then
-            echo "<html><body><h1>No payload received</h1></body></html>" > index.html
-            exit 0
-          fi
-
-          # Base64文字っぽいか最低限チェック
-          if ! echo "$PAYLOAD" | grep -Eq '^[A-Za-z0-9+/=]+$'; then
-            echo "<html><body><h1>Invalid payload (not Base64)</h1></body></html>" > index.html
-            exit 0
-          fi
-
-    printf "%s" "$PAYLOAD" | base64 --decode > index.html
-
-
-      - name: Commit and push
-        run: |
-          git config user.name "github-actions"
-          git config user.email "github-actions@github.com"
-          git add index.html
-          git commit -m "Update game via Dify" || echo "No changes"
-          git push
+            echo "<html><body><h1>No payload received</h1></body></ht
