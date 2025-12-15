@@ -1,1 +1,23 @@
-<html><body><h1>Base64 decode failed</h1></body></html>
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+#my-button {
+width: 100px;
+bight: 50px;
+}
+</style>
+</head>
+<body>
+<button id="my-button">Click me!</button>
+<p>Clicks: <span id="clicks">0</span></p>
+<script>
+var clicks = 0;
+
+document.getElementById("my-button").onlick = function() {
+clicks++;
+document.getElementById("clicks").innerHTML = clicks;
+};
+</script>
+</body>
+</html>
