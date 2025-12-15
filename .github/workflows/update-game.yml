@@ -20,8 +20,8 @@ jobs:
             echo "<html><body><h1>Test OK</h1></body></html>" > index.html
           else
             cat << 'EOF' > index.html
-            ${{ github.event.client_payload.code }}
-            EOF
+${{ github.event.client_payload.code }}
+EOF
           fi
 
       - name: Commit and push
