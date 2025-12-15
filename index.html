@@ -1,23 +1,40 @@
 <!DOCTYPE html>
-<html>
+<html lang="ja">
 <head>
-<style>
-#my-button {
-width: 100px;
-bight: 50px;
-}
-</style>
+  <meta charset="UTF-8">
+  <title>Click Game</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      text-align: center;
+      margin-top: 50px;
+    }
+    #count {
+      font-size: 48px;
+      margin: 20px;
+    }
+    button {
+      font-size: 20px;
+      padding: 10px 20px;
+    }
+  </style>
 </head>
 <body>
-<button id="my-button">Click me!</button>
-<p>Clicks: <span id="clicks">0</span></p>
-<script>
-var clicks = 0;
 
-document.getElementById("my-button").onlick = function() {
-clicks++;
-document.getElementById("clicks").innerHTML = clicks;
-};
-</script>
+  <h1>クリックゲーム</h1>
+  <div id="count">0</div>
+  <button id="btn">クリック！</button>
+
+  <script>
+    let count = 0;
+    const countDiv = document.getElementById("count");
+    const btn = document.getElementById("btn");
+
+    btn.addEventListener("click", () => {
+      count++;
+      countDiv.textContent = count;
+    });
+  </script>
+
 </body>
 </html>
