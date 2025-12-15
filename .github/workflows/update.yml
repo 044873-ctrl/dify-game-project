@@ -1,11 +1,11 @@
 name: Dify Auto Deploy Game
 
 # 手動トリガー or 定期実行
-on:
-  workflow_dispatch:
-  schedule:
-    - cron: '0 * * * *'  # 毎時 0 分に実行
-
+#on:
+#  workflow_dispatch:
+#  schedule:
+#    - cron: '0 * * * *'  # 毎時 0 分に実行
+on: []
 jobs:
   generate-and-deploy:
     runs-on: ubuntu-latest
