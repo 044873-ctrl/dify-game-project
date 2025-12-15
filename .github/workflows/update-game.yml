@@ -1,6 +1,7 @@
 name: Update Game from Dify
 
 on:
+　workflow_dispatch:
   repository_dispatch:
     types: [update_game]
 
