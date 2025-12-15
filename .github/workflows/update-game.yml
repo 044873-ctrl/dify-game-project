@@ -16,12 +16,10 @@ jobs:
 
       - name: Write index.html
         run: |
-          if [ -z "${{ github.event.client_payload.code }}" ]; then
-            echo "<html><body><h1>Test OK</h1></body></html>" > index.html
+          if [ -z "${{ github.event.client_payload.code_base64 }}" ]; then
+            echo "PGh0bWw+PGJvZHk+PGgxPlRlc3QgT0s8L2gxPjwvYm9keT48L2h0bWw+" | base64 -d > index.html
           else
-            cat << 'EOF' > index.html
-${{ github.event.client_payload.code }}
-EOF
+            echo "${{ github.event.client_payload.code_base64 }}" | base64 -d > index.html
           fi
 
       - name: Commit and push
