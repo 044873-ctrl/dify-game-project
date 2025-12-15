@@ -1,0 +1,27 @@
+name: Update Game from Dify
+
+on:
+  repository_dispatch:
+    types: [update_game]
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Write index.html
+        run: |
+          cat << 'EOF' > index.html
+          ${{ github.event.client_payload.code }}
+          EOF
+
+      - name: Commit and push
+        run: |
+          git config user.name "github-actions"
+          git config user.email "github-actions@github.com"
+          git add index.html
+          git commit -m "Update game via Dify" || echo "No changes"
+          git push
