@@ -22,11 +22,20 @@ jobs:
       - name: Write index.html
         run: |
           PAYLOAD="${{ github.event.client_payload.code_base64 }}"
+
+          # 空チェック
           if [ -z "$PAYLOAD" ]; then
             echo "<html><body><h1>No payload received</h1></body></html>" > index.html
-          else
-            printf "%s" "$PAYLOAD" | base64 --decode > index.html
+            exit 0
           fi
+
+          # Base64文字っぽいか最低限チェック
+          if ! echo "$PAYLOAD" | grep -Eq '^[A-Za-z0-9+/=]+$'; then
+            echo "<html><body><h1>Invalid payload (not Base64)</h1></body></html>" > index.html
+            exit 0
+          fi
+
+    printf "%s" "$PAYLOAD" | base64 --decode > index.html
 
 
       - name: Commit and push
