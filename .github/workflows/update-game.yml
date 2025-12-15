@@ -1,23 +1,28 @@
 name: Update Game from Dify
 
 on:
-　workflow_dispatch:
+  workflow_dispatch:
   repository_dispatch:
     types: [update_game]
+
+permissions:
+  contents: write
 
 jobs:
   update:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
       - name: Write index.html
         run: |
-          cat << 'EOF' > index.html
-          ${{ github.event.client_payload.code }}
-          EOF
+          if [ -z "${{ github.event.client_payload.code }}" ]; then
+            echo "<html><body><h1>Test OK</h1></body></html>" > index.html
+          else
+            cat << 'EOF' > index.html
+            ${{ github.event.client_payload.code }}
+            EOF
+          fi
 
       - name: Commit and push
         run: |
