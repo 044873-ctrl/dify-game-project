@@ -18,34 +18,14 @@ jobs:
 
       - name: Debug payload (safe)
         run: |
-          echo "Payload raw:"
-          cat <<'EOF'
-${{ github.event.client_payload.code_base64 }}
-EOF
+          echo "Payload raw start"
+          echo "${{ github.event.client_payload.code_base64 }}" | head -c 120 || true
+          echo ""
+          echo "Payload raw end"
 
       - name: Write index.html
         run: |
-          cat <<'EOF' > payload.txt
-${{ github.event.client_payload.code_base64 }}
-EOF
+          PAYLOAD="${{ github.event.client_payload.code_base64 }}"
 
-          if [ ! -s payload.txt ]; then
+          if [ -z "$PAYLOAD" ]; then
             echo "<html><body><h1>No payload received</h1></body></html>" > index.html
-            exit 0
-          fi
-
-          # Base64か簡易チェック
-          if ! grep -Eq '^[A-Za-z0-9+/=]+$' payload.txt; then
-            echo "<html><body><h1>Invalid payload (not Base64)</h1></body></html>" > index.html
-            exit 0
-          fi
-
-          base64 --decode payload.txt > index.html
-
-      - name: Commit and push
-        run: |
-          git config user.name "github-actions"
-          git config user.email "github-actions@github.com"
-          git add index.html
-          git commit -m "Update game via Dify" || echo "No changes to commit"
-          git push
