@@ -3,38 +3,13 @@
 <head>
   <meta charset="UTF-8">
   <title>Click Game</title>
-  <style>
-    body {
-      font-family: sans-serif;
-      text-align: center;
-      margin-top: 50px;
-    }
-    #count {
-      font-size: 48px;
-      margin: 20px;
-    }
-    button {
-      font-size: 20px;
-      padding: 10px 20px;
-    }
-  </style>
 </head>
 <body>
 
-  <h1>クリックゲーム</h1>
-  <div id="count">0</div>
-  <button id="btn">クリック！</button>
+<h1>クリックゲーム</h1>
+<div id="count">0</div>
+<button id="btn">クリック！</button>
 
-  <script>
-    let count = 0;
-    const countDiv = document.getElementById("count");
-    const btn = document.getElementById("btn");
-
-    btn.addEventListener("click", () => {
-      count++;
-      countDiv.textContent = count;
-    });
-  </script>
-
+<script src="game.js"></script>
 </body>
 </html>
