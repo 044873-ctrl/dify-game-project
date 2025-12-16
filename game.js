@@ -1,6 +1,6 @@
 let count = 0;
 
-document.getElementById("btn").addEventListener("click", function() {
+document.getElementById(btn).addEventListener(click, function() {
   count++;
-  document.getElementById("count").innerHTML = count;
+  document.getElementById(count).textContent = count;
 });
