@@ -27,6 +27,12 @@ jobs:
 
           printf "%s" "$JS" > game.js
 
+      - name: Debug payload
+        run: |
+          echo "DEBUG PAYLOAD:"
+          echo '${{ github.event.client_payload.game_js }}'
+    
+
       - name: Commit and push
         run: |
           git config user.name "github-actions"
