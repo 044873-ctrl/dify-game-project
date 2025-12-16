@@ -16,22 +16,24 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Write game.js
-        run: |
-          JS='${{ github.event.client_payload.game_js }}'
-
-          if [ -z "$JS" ]; then
-            echo "No JS payload received"
-            exit 0
-          fi
-
-          printf "%s" "$JS" > game.js
-
       - name: Debug payload
         run: |
           echo "DEBUG PAYLOAD:"
           echo '${{ github.event.client_payload.game_js }}'
-    
+          echo ""
+
+      - name: Write game.js
+        run: |
+          JS='${{ github.event.client_payload.game_js }}'
+
+          # 空チェック
+          if [ -z "$JS" ]; then
+            echo "No payload received"
+            exit 0
+          fi
+
+          # game.js に書き込み
+          printf "%s" "$JS" > game.js
 
       - name: Commit and push
         run: |
@@ -40,4 +42,3 @@ jobs:
           git add game.js
           git commit -m "Update game.js via Dify" || echo "No changes"
           git push
-
