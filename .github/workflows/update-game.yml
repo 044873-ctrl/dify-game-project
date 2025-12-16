@@ -1,4 +1,4 @@
-name: Update Game from Dify
+name: Update Game JS from Dify
 
 on:
   workflow_dispatch:
@@ -16,36 +16,22 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Debug payload (raw)
+      - name: Write game.js
         run: |
-          echo "RAW PAYLOAD:"
-          echo '${{ github.event.client_payload.code_base64 }}'
-          echo ""
+          JS='${{ github.event.client_payload.game_js }}'
 
-      - name: Write index.html
-        run: |
-          RAW='${{ github.event.client_payload.code_base64 }}'
-
-          # {{ と }} を除去
-          PAYLOAD=$(echo "$RAW" | sed 's/^{{//; s/}}$//')
-
-          if [ -z "$PAYLOAD" ]; then
-            echo "<html><body><h1>No payload received</h1></body></html>" > index.html
+          if [ -z "$JS" ]; then
+            echo "No JS payload received"
             exit 0
           fi
 
-          # Base64として成立するかチェック
-          if ! echo "$PAYLOAD" | grep -Eq '^[A-Za-z0-9+/=]+$'; then
-            echo "<html><body><h1>Invalid payload (not Base64)</h1></body></html>" > index.html
-            exit 0
-          fi
-
-          printf "%s" "$PAYLOAD" | base64 --decode > index.html
+          printf "%s" "$JS" > game.js
 
       - name: Commit and push
         run: |
           git config user.name "github-actions"
           git config user.email "github-actions@github.com"
-          git add index.html
-          git commit -m "Update game via Dify" || echo "No changes to commit"
+          git add game.js
+          git commit -m "Update game.js via Dify" || echo "No changes"
           git push
+
